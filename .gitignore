@@ -103,5 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
-#package-lock
+# package-lock
 package-lock.json
+
+# coverage from jest tests
+coverage
