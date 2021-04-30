@@ -2,7 +2,7 @@ openapi: '3.0.2'
 
 info:
   title: Game Score API
-  description: 'API for the videogame An Eastern Tale: Uncharted Land that allows the upload of scores
+  description: 'API for the videogame An eastern tale: Uncharted Land that allows the upload of scores
                 and the registry of new users. It allows to visualize the best scores aswell.'
   # API para el videojuego An Eastern Tale: Uncharted Land que permite la subida de puntuaciones
   #               y el registro de usuarios. También permite visualizar las mejores puntuaciones.'
@@ -46,7 +46,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
-  
+
+
   /players/me:
     patch:
       summary: User's password change
@@ -92,6 +93,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
+
   /players/{playerId}:
     parameters:
       - name: playerId
@@ -114,6 +116,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
+
 
   /scores:
     get:
@@ -166,6 +169,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
+
 
   /scores/{scoreId}:
     parameters:
@@ -220,6 +224,7 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
+
   /players-login:
     post:
       summary: Player's login into the application
@@ -263,6 +268,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
+
 
   /players-logout:
     post:
@@ -352,6 +358,7 @@ components:
       description: Message of error from an invalid request
       type: string
       example: Here's your error message
+
 
   responses:
     BadRequest:
