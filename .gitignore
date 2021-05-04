@@ -108,3 +108,6 @@ package-lock.json
 
 # coverage from jest tests
 coverage
+
+# loggin files
+*.log
