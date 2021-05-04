@@ -6,6 +6,7 @@ const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const Fawn = require('fawn');
 const Joi = require('joi');
+const auth = require('../middleware/auth');
 
 // Registro de un nuevo jugador
 router.post('/', async (req, res) => {

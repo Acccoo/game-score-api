@@ -4,6 +4,7 @@ const { Score, validate } = require('../models/score');
 const validateObjectId = require('../middleware/validateObjectId');
 const Fawn = require('fawn');
 const _ = require('lodash');
+const auth = require('../middleware/auth');
 
 // Obtener puntuaciones
 router.get('/', async (req, res) => {
