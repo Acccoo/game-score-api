@@ -1,4 +1,3 @@
 {
-    "jwtPrivateKey": "eastern_jwtPrivateKey",
-    "db": "eastern_db"
+    "jwtPrivateKey": "eastern_jwtPrivateKey"
 }

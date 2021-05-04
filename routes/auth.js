@@ -4,6 +4,7 @@ const router = express.Router();
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 
+// Inicio de sesión
 router.post('/players-login', async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -21,6 +22,7 @@ router.post('/players-login', async (req, res) => {
     res.status(200).send(token);
 });
 
+// Cierre de sesión
 router.post('/players-logout', async (req, res) => {
     res.status(204).send();
 });
