@@ -41,10 +41,13 @@ const scoreSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
-    date: {
+    dateCre: {
         type: Date,
         required: true,
         default: Date.now
+    },
+    dateUpdate: {
+        type: Date
     },
     player: {
         type: playerSchema,
@@ -52,14 +55,12 @@ const scoreSchema = new mongoose.Schema({
     }
 });
 
-// Validar un score
+// Validar un score (usualmente recibido por parate del cliente)
 function validateScore(score) {
     const schema = Joi.object({
         author: Joi.string().minLength(3).maxlength(10).required(),
         score: Joi.number().integer().min(0).max(999999999).required(),
-        mode: Joi.string().required(),
-        date: Joi.date().required(),
-        playerId: Joi.objectId().required()
+        mode: Joi.string().required()
     });
 
     return schema.validate(score);

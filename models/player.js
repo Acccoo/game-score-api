@@ -57,14 +57,12 @@ playerSchema.methods.generateToken = function() {
 
 const Player = mongoose.model('Player', playerSchema);
 
-// Validar un player
+// Validar un jugador
 function validatePlayer(player) {
     const schema = Joi.object({
         email: Joi.string().minLength(6).maxlength(100).required().email(),
         password: Joi.string().minLength(8).maxlength(50).required(),
-        gameTime: Joi.number().integer().min(0).required(),
-        isAdmin: Joi.boolean().required(),
-        dateCre: Joi.date().required()
+        gameTime: Joi.number().integer().min(0).required()
     });
 
     return schema.validate(player);
