@@ -1,9 +1,10 @@
 openapi: '3.0.2'
-
+#
 info:
   title: Game Score API
-  description: 'API for the videogame An eastern tale: Uncharted Land that allows the upload of scores
-                and the registry of new users. It allows to visualize the best scores aswell.'
+  description: |
+    ### API for the videogame _An eastern tale: Uncharted Land_ that allows the upload of scores and the registry of new users. 
+    It allows to visualize the best scores aswell.
   # API para el videojuego An Eastern Tale: Uncharted Land que permite la subida de puntuaciones
   #               y el registro de usuarios. También permite visualizar las mejores puntuaciones.'
   version: '1.0.0'
@@ -13,10 +14,10 @@ info:
   contact:
     name: Marcos Carretero Poblete
     email: mcarretero214@gmail.com
-
+#
 servers:
   - url: https://api.server.test/api
-
+#
 paths:
   /players:
     post:
@@ -46,8 +47,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /players/me:
     patch:
       summary: User's password change
@@ -92,8 +93,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /players/{playerId}:
     parameters:
       - name: playerId
@@ -116,8 +117,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /scores:
     get:
       summary: Returns all the scores from the system
@@ -169,8 +170,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /scores/{scoreId}:
     parameters:
       - name: scoreId
@@ -223,8 +224,8 @@ paths:
           $ref: '#/components/responses/NoContent'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /players-login:
     post:
       summary: Player's login into the application
@@ -268,8 +269,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-
-
+#
+#
   /players-logout:
     post:
       summary: Player's logout from the application
@@ -282,7 +283,7 @@ paths:
           $ref: '#/components/responses/NoContent'
         500:
           $ref: '#/components/responses/InternalServerError'
-
+#
 components:
   schemas:
     Id:
@@ -292,7 +293,7 @@ components:
       minLength: 24
       maxLength: 24
       example: 60799e1bd0c6bb02fcf51a90
-
+#
     Email:
       description: Email from the player
       type: string
@@ -300,13 +301,13 @@ components:
       minLength: 6
       maxLength: 100
       example: thisis@anexample.com
-
+#
     DateCre:
       description: Creation date of the new element in the system
       type: string
       format: date
       example: 2021-04-20
-
+#
     UserBody:
       description: Schema for the body of a user
       type: object
@@ -324,7 +325,7 @@ components:
         - email
         - gameTime
         - dateCre
-
+#
     ScoreBody:
       description: Schema for the body of a score
       type: object
@@ -353,13 +354,13 @@ components:
         - author
         - mode
         - dateCre
-
+#
     ErrorString:
       description: Message of error from an invalid request
       type: string
       example: Here's your error message
-
-
+#
+#
   responses:
     BadRequest:
       description: Bad request
@@ -367,14 +368,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorString'
-
+#
     Unauthorized:
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorString'
-
+#
     Forbidden:
       description: Forbidden
       content:
@@ -388,13 +389,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorString'
-
+#
     InternalServerError:
       description: Internal server error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorString'
-
+#
     NoContent:
       description: No content for the response
