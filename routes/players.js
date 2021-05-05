@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { Player, validate } = require('../models/player');
-const validateObjectId = require('../middleware/validateObjectId');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const Fawn = require('fawn');
 const Joi = require('joi');
+const { Player, validate } = require('../models/player');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const validator = require('../middleware/validator');
+const validateObjectId = require('../middleware/validateObjectId');
 
 // Registro de un nuevo jugador
 router.post('/', validator(validate), async (req, res) => {

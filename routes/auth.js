@@ -1,8 +1,8 @@
-const { Player } = require('../models/player');
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
+const { Player } = require('../models/player');
 const validator = require('../middleware/validator');
 
 // Inicio de sesión
