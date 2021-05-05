@@ -3,12 +3,10 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
+const validator = require('../middleware/validator');
 
 // Inicio de sesión
-router.post('/players-login', async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
+router.post('/players-login', validator(validate), async (req, res) => {
     // Comprobar que el usuario no está ya registrado
     let player = await Player.findOne({ email: req.body.email });
     if (!player) return res.status(400).send('Invalid email or password');

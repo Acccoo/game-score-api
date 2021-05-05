@@ -111,3 +111,6 @@ coverage
 
 # logging files
 *.log
+
+# test folder
+test/

@@ -5,6 +5,8 @@ const validateObjectId = require('../middleware/validateObjectId');
 const Fawn = require('fawn');
 const _ = require('lodash');
 const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
+const validator = require('../middleware/validator');
 
 // Obtener puntuaciones
 router.get('/', async (req, res) => {
@@ -14,10 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 // Subir puntuación
-router.post('/', auth, async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
+router.post('/', [auth, validator(validate)], async (req, res) => {
     // Guardar la nueva puntuación en la base de datos
     let score = new Score(_.pick(req.body, ['score', 'author', 'mode']));
     score.date = Date.now;
@@ -33,10 +32,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Modificar puntuación
-router.patch('/:scoreId', async (req, res) => {
-    const { error } = validate(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
-
+router.patch('/:scoreId', [auth, admin, validateObjectId, validator(validate)], async (req, res) => {
     const score = await Score.findByIdAndUpdate(req.params.scoreId, {
         score: req.body.score,
         dateUpdate: Date.now
@@ -48,7 +44,7 @@ router.patch('/:scoreId', async (req, res) => {
 });
 
 // Eliminar puntuación
-router.delete('/:scoreId', async(req, res) => {
+router.delete('/:scoreId', [auth, admin, validateObjectId], async(req, res) => {
     const score = await Score.findByIdAndRemove(req.params.scoreId);
     if (!score) return notFound(res);
 
