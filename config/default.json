@@ -1,4 +1,4 @@
 {
-    "jwtPrivateKey": "",
+    "jwtPrivateKey": "123",
     "db": "mongodb://localhost/score-api"
 }

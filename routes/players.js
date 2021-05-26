@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const Fawn = require('fawn');
 const Joi = require('joi');
 const { Player, validate } = require('../models/player');
@@ -10,17 +11,20 @@ const admin = require('../middleware/admin');
 const validator = require('../middleware/validator');
 const validateObjectId = require('../middleware/validateObjectId');
 
+// Inicializar Fawn
+Fawn.init(mongoose);
+
 // Registro de un nuevo jugador
 router.post('/', validator(validate), async (req, res) => {
     // Comprobar que el usuario no está ya registrado
-    let player = await Player.findOne({ email: req.body.email });
-    if (player) return res.status(400).send(error.details[0].message);
+    let player = await Player.findOne({ email: req.body.email }).exec();
+    if (player) return res.status(400).send('Email already in use');
 
     // Guardar el nuevo usuario en la base de datos
-    player = new Player(_.pick(req.body, ['email', 'password', 'gameTime', 'dateCre']));
+    player = new Player(_.pick(req.body, ['email', 'password', 'gameTime']));
 
     // Generar contraseña con hash y bcrypt
-    const salt = await bcrypt.genSalt(20);
+    const salt = await bcrypt.genSalt();
     player.password = await bcrypt.hash(player.password, salt);
 
     try{
@@ -52,7 +56,7 @@ router.patch('/me', [auth, validator(validatePassword)], async (req, res) => {
 });
 
 // Eliminar un jugador (solo admin)
-router.delete('/:playerId', [auth, admin, validateObjectId], async (req, res) => {
+router.delete('/:playerId', [auth, admin, validateObjectId(playerId)], async (req, res) => {
     const player = await Player.findByIdAndRemove(req.params.playerId);
     if (!player) return notFound(res);
 
