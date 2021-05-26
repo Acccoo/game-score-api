@@ -9,11 +9,11 @@ const validator = require('../middleware/validator');
 router.post('/players-login', validator(validate), async (req, res) => {
     // Comprobar que el usuario no está ya registrado
     let player = await Player.findOne({ email: req.body.email });
-    if (!player) return res.status(400).send('Invalid email or password');
+    if (!player) return res.status(400).send('Invalid email or password.');
 
     // Validar la contraseña
     const validPassword = await bcrypt.compare(req.body.password, player.password);
-    if (!validPassword) return res.status(400).send('Invalid email or password');
+    if (!validPassword) return res.status(400).send('Invalid email or password.');
 
     // Generar el token de autenticación para la sesión actual
     const token = player.generateToken();
@@ -27,8 +27,8 @@ router.post('/players-logout', async (req, res) => {
 
 function validate(object) {
     const schema = Joi.object({
-        email:  Joi.string().minLength(6).maxlength(100).required().email(),
-        password: Joi.string().minLength(8).maxlength(50).required()
+        email:  Joi.string().min(6).max(100).required().email(),
+        password: Joi.string().min(8).max(50).required()
     });
 
     return schema.validate(object);

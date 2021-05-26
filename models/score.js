@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 
 // Esquema que debe seguir el campo player en la colección Score
 const playerSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        trim: true
+    },
     email: {
         type: String,
         required: true,
@@ -55,18 +60,18 @@ const scoreSchema = new mongoose.Schema({
     }
 });
 
-// Validar un score (usualmente recibido por parate del cliente)
+const Score = mongoose.model('Score', scoreSchema);
+
+// Validar un score (usualmente recibido por parte del cliente)
 function validateScore(score) {
     const schema = Joi.object({
-        author: Joi.string().minLength(3).maxlength(10).required(),
+        author: Joi.string().min(3).max(10).required(),
         score: Joi.number().integer().min(0).max(999999999).required(),
-        mode: Joi.string().required()
+        mode: Joi.string().valid('easy', 'normal', 'hard', 'lunatic').required()
     });
 
     return schema.validate(score);
 }
-
-const Score = mongoose.model('Score', scoreSchema);
 
 exports.Score = Score;
 exports.validate = validateScore;

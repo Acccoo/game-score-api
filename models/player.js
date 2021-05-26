@@ -17,12 +17,12 @@ const playerSchema = new mongoose.Schema({
         type: String,
         trim: true,
         maxlength: 10,
-        minlength: 3
+        minlength: 3,
     },
     password: {
         type: String,
         required: true,
-        maxlength: 50,
+        maxlength: 100,
         minlength: 8
     },
     gameTime: {
@@ -33,7 +33,6 @@ const playerSchema = new mongoose.Schema({
     },
     isAdmin:{
         type: Boolean,
-        required: true,
         default: false
     },
     dateCre: {
@@ -60,8 +59,8 @@ const Player = mongoose.model('Player', playerSchema);
 // Validar un jugador
 function validatePlayer(player) {
     const schema = Joi.object({
-        email: Joi.string().minLength(6).maxlength(100).required().email(),
-        password: Joi.string().minLength(8).maxlength(50).required(),
+        email: Joi.string().min(6).max(100).required().email(),
+        password: Joi.string().min(8).max(100).required(),
         gameTime: Joi.number().integer().min(0).required()
     });
 

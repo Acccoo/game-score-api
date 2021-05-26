@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Fawn = require('fawn');
 const _ = require('lodash');
 const { Score, validate } = require('../models/score');
 const auth = require('../middleware/auth');
@@ -11,24 +10,27 @@ const validateObjectId = require('../middleware/validateObjectId');
 // Obtener puntuaciones
 router.get('/', async (req, res) => {
     const scores = await Score.find().sort('score');
+    scores.forEach(item => item = _.pick(item, ['score', 'author', 'mode']));
 
-    res.status(200).send(scores);
+    res.status(200).send(scores[0]);
 });
 
 // Subir puntuación
 router.post('/', [auth, validator(validate)], async (req, res) => {
     // Guardar la nueva puntuación en la base de datos
     let score = new Score(_.pick(req.body, ['score', 'author', 'mode']));
+
+    // Completar los datos del score
     score.date = Date.now;
-    score.playerId = req.player._id;
-
-    try {
-        new Fawn.Task().save('scores', score).run();
-
-        res.status(201).send(score);
-    } catch (ex) {
-        res.status(500).send('Something failed when uploading the score');
+    score.player ={
+        _id: req.player._id,
+        email: req.player.email,
+        nickname: score.author
     }
+
+    await score.save();
+
+    res.status(201).send(_.pick(score, ['author', 'score', 'mode', 'dateCre']));
 });
 
 // Modificar puntuación
@@ -52,7 +54,7 @@ router.delete('/:scoreId', [auth, admin, validateObjectId], async(req, res) => {
 });
 
 function notFound(response) {
-    response.status(404).send('The score with the given ID was not found');
+    response.status(404).send('The score with the given ID was not found.');
 }
 
 module.exports = router;
