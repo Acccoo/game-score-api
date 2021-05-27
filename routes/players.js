@@ -65,7 +65,7 @@ router.delete('/:playerId', [auth, admin, validateObjectId(playerId)], async (re
 
 function validatePassword(body) {
     const schema = Joi.object({
-        password: Joi.string().minLength(8).maxlength(50).required()
+        password: Joi.string().min(8).max(50).required()
     });
 
     return schema.validate(body);
