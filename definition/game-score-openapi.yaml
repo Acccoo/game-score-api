@@ -21,8 +21,29 @@ servers:
 paths:
 
   /players:
+    get:
+      summary: Get all players
+      operationId: getPlayers
+      tags:
+        - Players
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserBody'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
     post:
-      summary: Registry for new users
+      summary: Registry for new players
       operationId: registerPlayer
       tags:
         - Players
@@ -32,7 +53,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserBody'
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  description: Hashed and encrypted password for the new user
+                  type: string
+                  maxLength: 100
+                  minLength: 8
+                  example: ARGs22vsD402La301naxXve23
+                gameTime:
+                  $ref: '#/components/schemas/GameTime'
       responses:
         201:
           description: Created
@@ -53,7 +85,7 @@ paths:
 
   /players/me:
     patch:
-      summary: User's password change
+      summary: Player's password change
       operationId: changePassword
       tags:
         - Players
@@ -82,13 +114,12 @@ paths:
                   email:
                     $ref: '#/components/schemas/Email'
                   dateUpdate:
-                    description: Update date of the player
-                    type: string
-                    format: date
-                    example: 2021-04-20
+                    $ref: '#/components/schemas/DateUpdate'
                 required:
                   - email
                   - dateUpdate
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
         403:
@@ -104,18 +135,45 @@ paths:
         description: The identifier of the player
         schema:
           $ref: '#/components/schemas/Id'
+    get:
+      summary: Get the player with the given id
+      operationId: getPlayer
+      tags:
+        - Players
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBody'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
     delete:
-      summary: Remove a user from the system
+      summary: Remove a player from the system
       operationId: deletePlayer
       tags:
         - Players
       responses:
         204:
           $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
         403:
           $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/InternalServerError'
 
@@ -134,12 +192,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ScoreBody'
-        400:
-          $ref: '#/components/responses/BadRequest'
-        401:
-          $ref: '#/components/responses/Unauthorized'
-        403:
-          $ref: '#/components/responses/Forbidden'
         default:
           $ref: '#/components/responses/InternalServerError'
 
@@ -154,14 +206,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScoreBody'
+              type: object
+              properties:
+                score:
+                  $ref: '#/components/schemas/ScorePoints'
+                author:
+                  $ref: '#/components/schemas/ScoreAuthor'
+                mode:
+                  $ref: '#/components/schemas/ScoreMode'
       responses:
         201:
-          description: Created
-          content: 
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScoreBody'
+          $ref: '#/components/responses/score_post_response'
         400:
           $ref: '#/components/responses/BadRequest'
         401:
@@ -179,6 +234,21 @@ paths:
         description: The identifier of the score
         schema:
           $ref: '#/components/schemas/Id'
+    get:
+      summary: Get a specific Score
+      operationId: retrieveScore
+      tags:
+        - Scores
+      responses:
+        200:
+          $ref: '#/components/responses/score_post_response'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
     patch:
       summary: Edit a specific score
       operationId: changeScore
@@ -190,14 +260,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScoreBody'
+              type: object
+              properties:
+                score:
+                  $ref: '#/components/schemas/ScorePoints'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScoreBody'
+                allOf:
+                  - $ref: '#/components/schemas/ScoreBody'
+                properties:
+                  dateUpdate:
+                    $ref: '#/components/schemas/DateUpdate'
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
         403:
@@ -206,7 +285,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/InternalServerError'
-        
+
     delete:
       summary: Delete a specific score
       operationId: removeScore
@@ -215,6 +294,8 @@ paths:
       responses:
         204:
           $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
         403:
@@ -301,23 +382,55 @@ components:
     DateCre:
       description: Creation date of the new element in the system
       type: string
-      format: date
-      example: 2021-04-20
+      format: date-time
+      example: '2021-04-20'
+
+    DateUpdate:
+      description: Update date of the element in the system
+      type: string
+      format: date-time
+      example: '2021-04-20'
+
+    GameTime:
+      description: Time (in seconds) the user spent playing
+      type: integer
+      minimum: 0
+      example: 3600
+
+    ScoreAuthor:
+      description: Nickname of the player who achieved the current score
+      type: string
+      maxLength: 10
+      minLength: 3
+      example: AAA
+
+    ScoreMode:
+      description: Difficult of the achieved score
+      type: string
+      enum: [easy, normal, hard, lunatic]
+      example: normal
+
+    ScorePoints:
+      description: Amount of points of the score
+      type: integer
+      minimum: 0
+      maximum: 999999999
+      example: 15688382
 
     UserBody:
       description: Schema for the body of a user
       type: object
       properties:
+        _id:
+          $ref: '#/components/schemas/Id'
         email:
           $ref: '#/components/schemas/Email'
         gameTime:
-          description: Time (in seconds) the user spent playing
-          type: integer
-          minimum: 0
-          example: 3600
+          $ref: '#/components/schemas/GameTime'
         dateCre:
           $ref: '#/components/schemas/DateCre'
       required:
+        - _id
         - email
         - gameTime
         - dateCre
@@ -326,30 +439,19 @@ components:
       description: Schema for the body of a score
       type: object
       properties:
-        score: 
-          description: Amount of points of the score
-          type: integer
-          minimum: 0
-          maximum: 999999999
-          example: 15688382
+        _id:
+          $ref: '#/components/schemas/Id'
         author:
-          description: Nickname of the player that achieved the current score
-          type: string
-          maxLength: 10
-          minLength: 3
-          example: AAA
+          $ref: '#/components/schemas/ScoreAuthor'
+        score: 
+          $ref: '#/components/schemas/ScorePoints'
         mode: 
-          description: Difficult of the achieved score
-          type: string
-          enum: [easy, normal, hard, lunatic]
-          example: normal
-        dateCre:
-          $ref: '#/components/schemas/DateCre'
+          $ref: '#/components/schemas/ScoreMode'
       required:
-        - score
+        - _id
         - author
+        - score
         - mode
-        - dateCre
 
     ErrorString:
       description: Message of error from an invalid request
@@ -402,3 +504,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorString'
+
+    score_post_response:
+      description: Score response with date of creation
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ScoreBody'
+            properties:
+              dateCre:
+                $ref: '#/components/schemas/DateCre'

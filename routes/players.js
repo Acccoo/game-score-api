@@ -14,6 +14,8 @@ const validateObjectId = require('../middleware/validateObjectId');
 // Inicializar Fawn
 Fawn.init(mongoose);
 
+// CREAR GET ALL Y GET/:ID
+
 // Registro de un nuevo jugador
 router.post('/', validator(validate), async (req, res) => {
     // Comprobar que el usuario no está ya registrado
@@ -36,7 +38,7 @@ router.post('/', validator(validate), async (req, res) => {
         const token = player.generateToken();
 
         // Construir el objeto que se devuelve al cliente
-        res.status(201).header('x-auth-token', token).send(_.pick(player, ['email', 'gameTime', 'dateCre']));
+        res.status(201).header('x-auth-token', token).send(_.pick(player, ['_id, email', 'gameTime', 'dateCre']));
     } catch (ex) {
         res.status(500).send('Something failed when creating the new player');
     }
