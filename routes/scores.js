@@ -10,10 +10,12 @@ const validateObjectId = require('../middleware/validateObjectId');
 // Obtener puntuaciones
 router.get('/', async (req, res) => {
     const scores = await Score.find().sort('score');
-    scores.forEach(item => item = _.pick(item, ['score', 'author', 'mode']));
+    scores.forEach(item => item = _.pick(item, ['_id', 'score', 'author', 'mode']));
 
-    res.status(200).send(scores[0]);
+    res.status(200).send(scores);
 });
+
+// CREAR GET/:ID
 
 // Subir puntuación
 router.post('/', [auth, validator(validate)], async (req, res) => {
@@ -30,7 +32,7 @@ router.post('/', [auth, validator(validate)], async (req, res) => {
 
     await score.save();
 
-    res.status(201).send(_.pick(score, ['author', 'score', 'mode', 'dateCre']));
+    res.status(201).send(_.pick(score, ['_id', 'author', 'score', 'mode', 'dateCre']));
 });
 
 // Modificar puntuación
@@ -42,7 +44,7 @@ router.patch('/:scoreId', [auth, admin, validateObjectId, validator(validate)], 
     if (!score) return notFound(res);
     
     // Enviar de vuelta la puntuación modificada
-    res.status(200).send(_.pick(score, ['score', 'dateUpdate']));
+    res.status(200).send(_.pick(score, ['_id', 'author', 'score', 'mode', 'dateUpdate']));
 });
 
 // Eliminar puntuación

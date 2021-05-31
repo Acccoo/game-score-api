@@ -14,11 +14,13 @@ const validateObjectId = require('../middleware/validateObjectId');
 // Inicializar Fawn
 Fawn.init(mongoose);
 
+// CREAR GET ALL Y GET/:ID
+
 // Registro de un nuevo jugador
 router.post('/', validator(validate), async (req, res) => {
     // Comprobar que el usuario no está ya registrado
     let player = await Player.findOne({ email: req.body.email }).exec();
-    if (player) return res.status(400).send('Email already in use');
+    if (player) return res.status(409).send('Email already in use');
 
     // Guardar el nuevo usuario en la base de datos
     player = new Player(_.pick(req.body, ['email', 'password', 'gameTime']));
@@ -36,7 +38,7 @@ router.post('/', validator(validate), async (req, res) => {
         const token = player.generateToken();
 
         // Construir el objeto que se devuelve al cliente
-        res.status(201).header('x-auth-token', token).send(_.pick(player, ['email', 'gameTime', 'dateCre']));
+        res.status(201).header('x-auth-token', token).send(_.pick(player, ['_id, email', 'gameTime', 'dateCre']));
     } catch (ex) {
         res.status(500).send('Something failed when creating the new player');
     }
@@ -56,7 +58,7 @@ router.patch('/me', [auth, validator(validatePassword)], async (req, res) => {
 });
 
 // Eliminar un jugador (solo admin)
-router.delete('/:playerId', [auth, admin, validateObjectId(playerId)], async (req, res) => {
+router.delete('/:playerId', [auth, admin, validateObjectId], async (req, res) => {
     const player = await Player.findByIdAndRemove(req.params.playerId);
     if (!player) return notFound(res);
 
