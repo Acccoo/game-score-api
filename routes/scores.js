@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
     res.status(200).send(scoresResponse);
 });
 
-// CREAR GET/:ID
+// Obtener puntuación por ids
 router.get('/:scoreId', validateObjectId, async (req, res) => {
     const score = await Score.findById(req.params.scoreId);
     if (!score) return notFound(res);
