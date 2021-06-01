@@ -4,7 +4,8 @@
   "description": "API creada para la obtención y envío de puntuaciones para mi proyecto de final de curso",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "nodemon": "nodemon .\\index.js"
   },
   "repository": {
     "type": "git",

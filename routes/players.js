@@ -9,12 +9,31 @@ const { Player, validate } = require('../models/player');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const validator = require('../middleware/validator');
-const validateObjectId = require('../middleware/validateObjectId');
+const validateObjectId = require('../middleware/validatePlayerObjectId');
 
 // Inicializar Fawn
 Fawn.init(mongoose);
 
-// CREAR GET ALL Y GET/:ID
+// Obtener todos los jugadores
+router.get('/', auth, async (req, res) => {
+    const players = await Player.find().sort({'gameTime': -1});
+    let playersResponse = [];
+
+    players.forEach(item => {
+        item = _.pick(item, ['_id', 'email', 'gameTime', 'dateCre']);
+        playersResponse.push(item);
+    });
+
+    res.status(200).send(playersResponse);
+});
+
+// Obtener un jugador específico
+router.get('/:playerId', [auth, admin, validateObjectId], async (req, res) => {
+    const player = await Player.findById(req.params.playerId);
+    if (!player) return notFound(res);
+
+    res.status(200).send(_.pick(player, ['_id', 'email', 'gameTime', 'dateCre']));
+});
 
 // Registro de un nuevo jugador
 router.post('/', validator(validate), async (req, res) => {
@@ -47,13 +66,12 @@ router.post('/', validator(validate), async (req, res) => {
 // Aumento de tiempo de juego
 router.patch('/me', [auth, validator(validateGameTime)], async (req, res) => {
     // Obtener el jugador de la request
-    const player = await Player.findById(req.player._id)
+    const player = await Player.findById(req.player._id);
     if(!player) return notFound(res);
-
-    player.gameTime += req.body.gameTime;
+    player.gameTime = parseInt(player.gameTime, 10) + parseInt(req.body.gameTime, 10);
     const playerUpdate = await Player.findByIdAndUpdate(player._id, {
         gameTime: player.gameTime,
-        dateUpdate: Date.now
+        dateUpdate: Date.now()
     }, { new: true });
 
     // Enviar al usuario los datos del jugador modificado
