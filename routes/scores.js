@@ -5,17 +5,28 @@ const { Score, validate } = require('../models/score');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const validator = require('../middleware/validator');
-const validateObjectId = require('../middleware/validateObjectId');
+const validateObjectId = require('../middleware/validateScoreObjectId');
 
 // Obtener puntuaciones
 router.get('/', async (req, res) => {
-    const scores = await Score.find().sort('score');
-    scores.forEach(item => item = _.pick(item, ['_id', 'score', 'author', 'mode']));
+    const scores = await Score.find().sort({'score': -1});
+    const scoresResponse = [];
 
-    res.status(200).send(scores);
+    scores.forEach(item => {
+        item = _.pick(item, ['_id', 'author', 'score', 'mode']);
+        scoresResponse.push(item);
+    });
+
+    res.status(200).send(scoresResponse);
 });
 
 // CREAR GET/:ID
+router.get('/:scoreId', validateObjectId, async (req, res) => {
+    const score = await Score.findById(req.params.scoreId);
+    if (!score) return notFound(res);
+
+    res.status(200).send(_.pick(score, ['_id', 'author', 'score', 'mode', 'dateCre']));
+});
 
 // Subir puntuación
 router.post('/', [auth, validator(validate)], async (req, res) => {
@@ -23,7 +34,7 @@ router.post('/', [auth, validator(validate)], async (req, res) => {
     let score = new Score(_.pick(req.body, ['score', 'author', 'mode']));
 
     // Completar los datos del score
-    score.date = Date.now;
+    score.date = Date.now();
     score.player ={
         _id: req.player._id,
         email: req.player.email,
@@ -39,7 +50,7 @@ router.post('/', [auth, validator(validate)], async (req, res) => {
 router.patch('/:scoreId', [auth, admin, validateObjectId, validator(validate)], async (req, res) => {
     const score = await Score.findByIdAndUpdate(req.params.scoreId, {
         score: req.body.score,
-        dateUpdate: Date.now
+        dateUpdate: Date.now()
     }, { new: true });  // Devolver la puntuación después de ser actualizada
     if (!score) return notFound(res);
     
