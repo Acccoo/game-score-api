@@ -97,12 +97,10 @@ paths:
             schema:
               type: object
               properties:
-                token:
-                  description: Authentication token from the user
-                  type: string
-                  example: 424fmsQG&5JftVs75124cPjmBsZ6YtDST35tcetpw75633c4Cc5cD
+                gameTime:
+                  $ref: '#/components/schemas/GameTime'
               required:
-                - token
+                - gameTime
       responses:
         200:
           description: OK
@@ -113,10 +111,13 @@ paths:
                 properties:
                   email:
                     $ref: '#/components/schemas/Email'
+                  gameTime:
+                    $ref: '#/components/schemas/GameTime'
                   dateUpdate:
                     $ref: '#/components/schemas/DateUpdate'
                 required:
                   - email
+                  - gameTime
                   - dateUpdate
         400:
           $ref: '#/components/responses/BadRequest'

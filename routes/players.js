@@ -44,17 +44,20 @@ router.post('/', validator(validate), async (req, res) => {
     }
 });
 
-// Cambio de contraseña
-router.patch('/me', [auth, validator(validatePassword)], async (req, res) => {
+// Aumento de tiempo de juego
+router.patch('/me', [auth, validator(validateGameTime)], async (req, res) => {
     // Obtener el jugador de la request
-    const player = await Player.findByIdAndUpdate(req.player._id, { 
-        password: req.player.password,
-        dateUpdate: Date.now
-    }, { new: true });
+    const player = await Player.findById(req.player._id)
     if(!player) return notFound(res);
 
+    player.gameTime += req.body.gameTime;
+    const playerUpdate = await Player.findByIdAndUpdate(player._id, {
+        gameTime: player.gameTime,
+        dateUpdate: Date.now
+    }, { new: true });
+
     // Enviar al usuario los datos del jugador modificado
-    res.status(200).send(_.pick(player, ['email', 'dateUpdate']));
+    res.status(200).send(_.pick(playerUpdate, ['email', 'gameTime', 'dateUpdate']));
 });
 
 // Eliminar un jugador (solo admin)
@@ -65,9 +68,9 @@ router.delete('/:playerId', [auth, admin, validateObjectId], async (req, res) =>
     res.status(204).send();
 });
 
-function validatePassword(body) {
+function validateGameTime(body) {
     const schema = Joi.object({
-        password: Joi.string().min(8).max(50).required()
+        gameTime: Joi.number().integer().min(0).required()
     });
 
     return schema.validate(body);
