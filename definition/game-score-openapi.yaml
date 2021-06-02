@@ -35,10 +35,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserBody'
+        400:
+          $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
-        403:
-          $ref: '#/components/responses/Forbidden'
         default:
           $ref: '#/components/responses/InternalServerError'
 
@@ -74,10 +74,6 @@ paths:
                 $ref: '#/components/schemas/UserBody'
         400:
           $ref: '#/components/responses/BadRequest'
-        401:
-          $ref: '#/components/responses/Unauthorized'
-        403:
-          $ref: '#/components/responses/Forbidden'
         409:
           $ref: '#/components/responses/Conflict'
         default:
@@ -123,8 +119,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         401:
           $ref: '#/components/responses/Unauthorized'
-        403:
-          $ref: '#/components/responses/Forbidden'
         default:
           $ref: '#/components/responses/InternalServerError'
 
