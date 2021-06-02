@@ -32,11 +32,10 @@ describe('/api/players', () => {
             createToken(true);
         });
 
-        it('should return all players if token is valid', async () => {
+        it('should return all players if token is valid', async (done) => {
             await Player.collection.insertMany([
                 { email: 'getAll@test.com', password: 'nananana', gameTime: 0 },
                 { email: 'getAll2@test.com', password: 'nananana', gameTime: 0 }
-
             ]);
 
             const res = await exec();
@@ -45,22 +44,28 @@ describe('/api/players', () => {
             expect(res.body.length).toBe(2);
             expect(res.body.some(p => p.email === 'getAll@test.com')).toBeTruthy();
             expect(res.body.some(p => p.email === 'getAll2@test.com')).toBeTruthy();
+
+            done();
         });
 
-        it('should return bad request if the provided token is not valid', async () => {
+        it('should return bad request if the provided token is not valid', async (done) => {
             token = '24324ñkkmkdskpadñae';
 
             const res = await exec();
 
             expect(res.status).toBe(400);
+
+            done();
         });
 
-        it('should return unauthorized if user is not logged in', async () => {
+        it('should return unauthorized if user is not logged in', async (done) => {
             token = '';
 
             const res = await exec();
 
             expect(res.status).toBe(401);
+
+            done();
         });
     });
 
