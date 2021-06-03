@@ -1,0 +1,510 @@
+openapi: '3.0.2'
+
+info:
+  title: Game Score API
+  description: |
+    ### API for the videogame _An eastern tale: Uncharted Land_ that allows the upload of scores and the registry of new users. 
+    It allows to visualize the best scores aswell.
+  # API para el videojuego An Eastern Tale: Uncharted Land que permite la subida de puntuaciones
+  #               y el registro de usuarios. También permite visualizar las mejores puntuaciones.'
+  version: '1.0.0'
+  license:
+    name: Open Software License 3.0
+    url: https://opensource.org/licenses/OSL-3.0
+  contact:
+    name: Marcos Carretero Poblete
+    email: mcarretero214@gmail.com
+
+servers:
+  - url: https://api.server.test/api
+
+paths:
+
+  /players:
+    get:
+      summary: Get all players
+      operationId: getPlayers
+      tags:
+        - Players
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserBody'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Registry for new players
+      operationId: registerPlayer
+      tags:
+        - Players
+      requestBody:
+        description: Body of the request containing all the data for the new user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  description: Hashed and encrypted password for the new user
+                  type: string
+                  maxLength: 100
+                  minLength: 8
+                  example: ARGs22vsD402La301naxXve23
+                gameTime:
+                  $ref: '#/components/schemas/GameTime'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBody'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /players/me:
+    patch:
+      summary: Player's password change
+      operationId: changePassword
+      tags:
+        - Players
+      requestBody:
+        description: Body of the request containing the user's authentication token
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameTime:
+                  $ref: '#/components/schemas/GameTime'
+              required:
+                - gameTime
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    $ref: '#/components/schemas/Email'
+                  gameTime:
+                    $ref: '#/components/schemas/GameTime'
+                  dateUpdate:
+                    $ref: '#/components/schemas/DateUpdate'
+                required:
+                  - email
+                  - gameTime
+                  - dateUpdate
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /players/{playerId}:
+    parameters:
+      - name: playerId
+        in: path
+        required: true
+        description: The identifier of the player
+        schema:
+          $ref: '#/components/schemas/Id'
+    get:
+      summary: Get the player with the given id
+      operationId: getPlayer
+      tags:
+        - Players
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBody'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Remove a player from the system
+      operationId: deletePlayer
+      tags:
+        - Players
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /scores:
+    get:
+      summary: Returns all the scores from the system
+      operationId: retrieveScores
+      tags:
+        - Scores
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScoreBody'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Upload a new score
+      operationId: saveNewScore
+      tags:
+        - Scores
+      requestBody:
+        description: Body of the request containing the score data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score:
+                  $ref: '#/components/schemas/ScorePoints'
+                author:
+                  $ref: '#/components/schemas/ScoreAuthor'
+                mode:
+                  $ref: '#/components/schemas/ScoreMode'
+      responses:
+        201:
+          $ref: '#/components/responses/score_post_response'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /scores/{scoreId}:
+    parameters:
+      - name: scoreId
+        in: path
+        required: true
+        description: The identifier of the score
+        schema:
+          $ref: '#/components/schemas/Id'
+    get:
+      summary: Get a specific Score
+      operationId: retrieveScore
+      tags:
+        - Scores
+      responses:
+        200:
+          $ref: '#/components/responses/score_post_response'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      summary: Edit a specific score
+      operationId: changeScore
+      tags:
+        - Scores
+      requestBody:
+        description: Body of the request containing the updated score data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score:
+                  $ref: '#/components/schemas/ScorePoints'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ScoreBody'
+                properties:
+                  dateUpdate:
+                    $ref: '#/components/schemas/DateUpdate'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a specific score
+      operationId: removeScore
+      tags:
+        - Scores
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NoContent'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /players-login:
+    post:
+      summary: Player's login into the application
+      operationId: loginPlayer
+      tags:
+        - Log
+      requestBody:
+        description: Body of the request containing the login information of the user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  description: The hashed version of the password brought by the user
+                  type: string
+                  format: password
+                  example: 35vd353Sc386N4vDyjfsPWecW4cB60Z26
+              required:
+                - email
+                - password
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: Autogenerated token with some user information
+                    type: string
+                    example: 424fmsQG&5JftVs75124cPjmBsZ6YtDST35tcetpw75633c4Cc5cD
+                required:
+                  - token
+        400:
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+  /players-logout:
+    post:
+      summary: Player's logout from the application
+      operationId: logoutPlayer
+      tags:
+        - Log
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        default:
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+
+  schemas:
+    Id:
+      description: objectId from the Mongo database
+      type: string
+      format: uuid
+      minLength: 24
+      maxLength: 24
+      example: 60799e1bd0c6bb02fcf51a90
+
+    Email:
+      description: Email from the player
+      type: string
+      format: email
+      minLength: 6
+      maxLength: 100
+      example: thisis@anexample.com
+
+    DateCre:
+      description: Creation date of the new element in the system
+      type: string
+      format: date-time
+      example: '2021-04-20'
+
+    DateUpdate:
+      description: Update date of the element in the system
+      type: string
+      format: date-time
+      example: '2021-04-20'
+
+    GameTime:
+      description: Time (in seconds) the user spent playing
+      type: integer
+      minimum: 0
+      example: 3600
+
+    ScoreAuthor:
+      description: Nickname of the player who achieved the current score
+      type: string
+      maxLength: 10
+      minLength: 3
+      example: AAA
+
+    ScoreMode:
+      description: Difficult of the achieved score
+      type: string
+      enum: [easy, normal, hard, lunatic]
+      example: normal
+
+    ScorePoints:
+      description: Amount of points of the score
+      type: integer
+      minimum: 0
+      maximum: 999999999
+      example: 15688382
+
+    UserBody:
+      description: Schema for the body of a user
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/Id'
+        email:
+          $ref: '#/components/schemas/Email'
+        gameTime:
+          $ref: '#/components/schemas/GameTime'
+        dateCre:
+          $ref: '#/components/schemas/DateCre'
+      required:
+        - _id
+        - email
+        - gameTime
+        - dateCre
+
+    ScoreBody:
+      description: Schema for the body of a score
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/Id'
+        author:
+          $ref: '#/components/schemas/ScoreAuthor'
+        score: 
+          $ref: '#/components/schemas/ScorePoints'
+        mode: 
+          $ref: '#/components/schemas/ScoreMode'
+      required:
+        - _id
+        - author
+        - score
+        - mode
+
+    ErrorString:
+      description: Message of error from an invalid request
+      type: string
+      example: Here's your error message
+
+  responses:
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    NoContent:
+      description: No content for the response
+
+    Conflict:
+      description: Conflict in database. Item already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorString'
+
+    score_post_response:
+      description: Score response with date of creation
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ScoreBody'
+            properties:
+              dateCre:
+                $ref: '#/components/schemas/DateCre'
