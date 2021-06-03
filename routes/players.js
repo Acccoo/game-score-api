@@ -57,7 +57,7 @@ router.post('/', validator(validate), async (req, res) => {
         const token = player.generateToken();
 
         // Construir el objeto que se devuelve al cliente
-        res.status(201).header('x-auth-token', token).send(_.pick(player, ['_id, email', 'gameTime', 'dateCre']));
+        res.status(201).header('x-auth-token', token).send(_.pick(player, ['_id', 'email', 'gameTime', 'dateCre']));
     } catch (ex) {
         res.status(500).send('Something failed when creating the new player');
     }
@@ -68,7 +68,10 @@ router.patch('/me', [auth, validator(validateGameTime)], async (req, res) => {
     // Obtener el jugador de la request
     const player = await Player.findById(req.player._id);
     if(!player) return notFound(res);
+
+    // Aumentar el tiempo de juego del jugador recibido
     player.gameTime = parseInt(player.gameTime, 10) + parseInt(req.body.gameTime, 10);
+
     const playerUpdate = await Player.findByIdAndUpdate(player._id, {
         gameTime: player.gameTime,
         dateUpdate: Date.now()

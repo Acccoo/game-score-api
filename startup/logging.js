@@ -36,6 +36,7 @@ module.exports = function() {
     winston.add(
         new winston.transports.File({
             filename: 'logFile.log',
+            level: 'debug',
             format: winston.format.combine(
                 winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
                 winston.format.json()
