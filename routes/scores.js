@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
+const Joi = require('joi');
 const { Score, validate } = require('../models/score');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
@@ -47,7 +48,7 @@ router.post('/', [auth, validator(validate)], async (req, res) => {
 });
 
 // Modificar puntuación
-router.patch('/:scoreId', [auth, admin, validateObjectId, validator(validate)], async (req, res) => {
+router.patch('/:scoreId', [auth, admin, validateObjectId, validator(validateScorePoints)], async (req, res) => {
     const score = await Score.findByIdAndUpdate(req.params.scoreId, {
         score: req.body.score,
         dateUpdate: Date.now()
@@ -65,6 +66,14 @@ router.delete('/:scoreId', [auth, admin, validateObjectId], async(req, res) => {
 
     res.status(204).send();
 });
+
+function validateScorePoints(body) {
+    const schema = Joi.object({
+        score: Joi.number().integer().min(0).max(999999999).required()
+    });
+
+    return schema.validate(body);
+}
 
 function notFound(response) {
     response.status(404).send('The score with the given ID was not found.');

@@ -12,13 +12,17 @@ describe('/api/players', () => {
         token = new Player({ isAdmin: value }).generateToken();
     }
 
-    beforeEach(() => {
+    beforeEach((next) => {
         server = require('../../index');
+
+        next();
     });
 
-    afterEach(async () => {
+    afterEach(async (next) => {
         await server.close();
         await Player.deleteMany({});
+
+        next();
     });
 
     describe('GET /', () => {
