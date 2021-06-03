@@ -56,10 +56,14 @@ describe('/api/scores', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
-            expect(res.body.some(s => s.author === 'Robert')).toBeTruthy();
-            expect(res.body.some(s => s.author === 'Marc')).toBeTruthy();
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body.length).toBe(2);
+                expect(res.body.some(s => s.author === 'Robert')).toBeTruthy();
+                expect(res.body.some(s => s.author === 'Marc')).toBeTruthy();
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -86,10 +90,14 @@ describe('/api/scores', () => {
         it('should return the score if the given id is valid', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('score', score.score);
-            expect(res.body).toHaveProperty('author', score.author);
-            expect(res.body).toHaveProperty('mode', score.mode);
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body).toHaveProperty('score', score.score);
+                expect(res.body).toHaveProperty('author', score.author);
+                expect(res.body).toHaveProperty('mode', score.mode);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -97,7 +105,11 @@ describe('/api/scores', () => {
         it('should return bad request if the given id is not valid', async (done) => {
             const res = await exec('123');
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -105,7 +117,11 @@ describe('/api/scores', () => {
         it('should return not found if the given id does not exists in the databse', async (done) => {
             const res = await exec('6092b2d9c00ea81b94a90770');
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -138,7 +154,11 @@ describe('/api/scores', () => {
         it('should return the created score', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(201);
+            try {
+                expect(res.status).toBe(201);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -147,31 +167,55 @@ describe('/api/scores', () => {
             score.mode = 'nan';
             let res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             score.author = 'a';
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             score.score = -123;
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             score.player = null;
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             token = '123';
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -180,7 +224,11 @@ describe('/api/scores', () => {
             token = '';
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -215,11 +263,15 @@ describe('/api/scores', () => {
         it('should return the score object with the given score', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('score', points.score);
-            expect(res.body).toHaveProperty('author', score.author);
-            expect(res.body).toHaveProperty('mode', score.mode);
-            expect(res.body).toHaveProperty('dateUpdate');
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body).toHaveProperty('score', points.score);
+                expect(res.body).toHaveProperty('author', score.author);
+                expect(res.body).toHaveProperty('mode', score.mode);
+                expect(res.body).toHaveProperty('dateUpdate');
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -228,13 +280,21 @@ describe('/api/scores', () => {
             // Probar un id no válido
             let res = await exec('123');
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             // Probar un score no válido
             points.score = -234
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -243,7 +303,11 @@ describe('/api/scores', () => {
             token = '1234';
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -252,7 +316,11 @@ describe('/api/scores', () => {
             token = '';
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -261,7 +329,11 @@ describe('/api/scores', () => {
             createToken(false);
             const res = await exec();
 
-            expect(res.status).toBe(403);
+            try {
+                expect(res.status).toBe(403);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -269,7 +341,11 @@ describe('/api/scores', () => {
         it('should return not found if cannot retrieve the score with the given id', async (done) => {
             const res = await exec('6093afa6018c250bec3dd5e0');
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
             
             done();
         });
@@ -298,7 +374,11 @@ describe('/api/scores', () => {
         it('should return no content response if the score was removed successfully', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(204);
+            try {
+                expect(res.status).toBe(204);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -306,7 +386,11 @@ describe('/api/scores', () => {
         it('should return bad request if given id is not valid', async (done) => {
             const res = await exec('123');
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -315,7 +399,11 @@ describe('/api/scores', () => {
             token = '123';
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -324,7 +412,11 @@ describe('/api/scores', () => {
             token = '';
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -333,7 +425,11 @@ describe('/api/scores', () => {
             createToken(false);
             const res = await exec();
 
-            expect(res.status).toBe(403);
+            try {
+                expect(res.status).toBe(403);
+            } catch (err) {
+                done(err);
+            }
             
             done();
         });
@@ -341,7 +437,11 @@ describe('/api/scores', () => {
         it('should return not found if the score with the given id does not exist', async (done) => {
             const res = await exec('6093afa6018c250bec3dd5e0');
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });

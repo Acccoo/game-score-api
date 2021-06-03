@@ -44,10 +44,14 @@ describe('/api/players', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2);
-            expect(res.body.some(p => p.email === 'getAll@test.com')).toBeTruthy();
-            expect(res.body.some(p => p.email === 'getAll2@test.com')).toBeTruthy();
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body.length).toBe(2);
+                expect(res.body.some(p => p.email === 'getAll@test.com')).toBeTruthy();
+                expect(res.body.some(p => p.email === 'getAll2@test.com')).toBeTruthy();
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -57,7 +61,11 @@ describe('/api/players', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -67,7 +75,11 @@ describe('/api/players', () => {
 
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -92,9 +104,13 @@ describe('/api/players', () => {
         it('should return the player if a valid id is passed', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('email', player.email);
-            expect(res.body).toHaveProperty('gameTime', player.gameTime);
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body).toHaveProperty('email', player.email);
+                expect(res.body).toHaveProperty('gameTime', player.gameTime);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -102,7 +118,11 @@ describe('/api/players', () => {
         it('should return bad request if the provided id is not valid', async (done) => {
             const res = await exec('10hd9w823jd35d32');
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -111,7 +131,11 @@ describe('/api/players', () => {
             token = 'urpweiruwelkjdkmdnadlkan';
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -120,7 +144,11 @@ describe('/api/players', () => {
             token = '';
             const res = await exec();
             
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -129,7 +157,11 @@ describe('/api/players', () => {
             createToken(false);
             const res = await exec();
 
-            expect(res.status).toBe(403);
+            try {
+                expect(res.status).toBe(403);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -137,7 +169,11 @@ describe('/api/players', () => {
         it('should return not found if the player with the given id does not exist', async (done) => {
             const res = await exec('6092b2d9c00ea81b94a90770');
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -163,10 +199,14 @@ describe('/api/players', () => {
         it('should return the created player and the authentication token if all properties are valid', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(201);
-            expect(res.body).toHaveProperty('email', player.email);
-            expect(res.body).toHaveProperty('gameTime', player.gameTime);
-            expect(res.header).toHaveProperty('x-auth-token');
+            try {
+                expect(res.status).toBe(201);
+                expect(res.body).toHaveProperty('email', player.email);
+                expect(res.body).toHaveProperty('gameTime', player.gameTime);
+                expect(res.header).toHaveProperty('x-auth-token');
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -175,19 +215,31 @@ describe('/api/players', () => {
             player.email = 'novalid';
             let res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             player.email = 'post@test.com';
             player.password = 'nana';
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             player.password = 'nananananana';
             player.gameTime = -123;
             res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -197,7 +249,11 @@ describe('/api/players', () => {
             await entity.save();
             const res = await exec();
 
-            expect(res.status).toBe(409);
+            try {
+                expect(res.status).toBe(409);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -232,10 +288,14 @@ describe('/api/players', () => {
             gameTime.gameTime = 12345
             const res = await exec();
 
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('gameTime', player.gameTime + gameTime.gameTime);
-            expect(res.body).toHaveProperty('email', player.email);
-            expect(res.body).toHaveProperty('dateUpdate');
+            try {
+                expect(res.status).toBe(200);
+                expect(res.body).toHaveProperty('gameTime', player.gameTime + gameTime.gameTime);
+                expect(res.body).toHaveProperty('email', player.email);
+                expect(res.body).toHaveProperty('dateUpdate');
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -244,7 +304,11 @@ describe('/api/players', () => {
             gameTime.gameTime = -23;
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -253,7 +317,11 @@ describe('/api/players', () => {
             token = '2342342f'
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -262,7 +330,11 @@ describe('/api/players', () => {
             token = '';
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -271,7 +343,11 @@ describe('/api/players', () => {
             createToken(false);
             const res = await exec();
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         }); 
@@ -299,7 +375,11 @@ describe('/api/players', () => {
         it('should return no content response if the player was removed successfully', async (done) => {
             const res = await exec();
 
-            expect(res.status).toBe(204);
+            try {
+                expect(res.status).toBe(204);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -307,7 +387,11 @@ describe('/api/players', () => {
         it('should return bad request if identifier of the player is not valid', async (done) => {
             const res = await exec('123');
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -316,7 +400,11 @@ describe('/api/players', () => {
             token = '1234';
             const res = await exec();
 
-            expect(res.status).toBe(400);
+            try {
+                expect(res.status).toBe(400);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -325,7 +413,11 @@ describe('/api/players', () => {
             token = '';
             const res = await exec();
 
-            expect(res.status).toBe(401);
+            try {
+                expect(res.status).toBe(401);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -334,7 +426,11 @@ describe('/api/players', () => {
             createToken(false);
             const res = await exec();
 
-            expect(res.status).toBe(403);
+            try {
+                expect(res.status).toBe(403);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
@@ -342,7 +438,11 @@ describe('/api/players', () => {
         it('should return not found if the player with the given id does not exist', async (done) => {
             const res = await exec('6092b2d9c00ea81b94a90770');
 
-            expect(res.status).toBe(404);
+            try {
+                expect(res.status).toBe(404);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });

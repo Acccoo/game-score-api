@@ -15,7 +15,11 @@ describe('/', () => {
         it('should return the standard message of the home page', async (done) => {
             const res = await request(server).get('/');
 
-            expect(res.status).toBe(200);
+            try {
+                expect(res.status).toBe(200);
+            } catch (err) {
+                done(err);
+            }
 
             done();
         });
